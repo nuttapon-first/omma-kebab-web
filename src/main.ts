@@ -10,6 +10,8 @@ import App from './App.vue'
 import VueSidePanel from 'vue3-side-panel'
 import 'vue3-side-panel/dist/vue3-side-panel.css'
 import Notifications from '@kyvg/vue3-notification'
+import VueAwesomePaginate from 'vue-awesome-paginate'
+import 'vue-awesome-paginate/dist/style.css'
 
 const app = createApp(App)
 
@@ -19,6 +21,7 @@ app.use(i18n)
 app.use(createVuestic({ config: vuesticGlobalConfig }))
 app.use(VueSidePanel)
 app.use(Notifications)
+app.use(VueAwesomePaginate)
 
 if (import.meta.env.VITE_APP_GTM_ENABLED) {
   app.use(

@@ -47,7 +47,7 @@
             </thead>
 
             <tbody>
-              <tr v-for="transaction in salesReport.transactions" :key="transaction.id">
+              <tr v-for="transaction in salesReport.rows" :key="transaction.id">
                 <td>{{ formatDate(transaction.createdAt) }}</td>
                 <td>{{ transaction.branch }}</td>
                 <td>{{ transaction.menuName }}</td>
@@ -98,8 +98,24 @@
               </tr>
             </tfoot> -->
           </table>
+          <br />
         </div>
       </va-card-content>
+      <div v-if="totalRows > 0" class="row justify--center">
+        <!-- <va-pagination
+          v-model="page"
+          :total="totalRows"
+          :page-size="pageSize"
+          :update:v-model="getTransactions()"
+        /> -->
+        <vue-awesome-paginate
+          :total-items="totalRows"
+          :items-per-page="pageSize"
+          :current-page="page"
+          :on-click="onClickHandler"
+        />
+      </div>
+      <br />
     </va-card>
   </div>
 
@@ -226,6 +242,9 @@
     data() {
       return {
         isLoading: false,
+        page: 1,
+        pageSize: 10,
+        totalRows: 0,
         salesReport: {} as any,
         dateRange: { start: moment().startOf('d'), end: moment().endOf('d') },
         isShowCreateModel: false,
@@ -252,22 +271,16 @@
           const query: any = {
             start_date: moment(this.dateRange.start).format('YYYYMMDDHHmmss'),
             end_date: moment(this.dateRange.end).endOf('d').format('YYYYMMDDHHmmss'),
+            page: this.page,
+            page_size: this.pageSize,
+            sort: 'created_at',
+            sortDesc: true,
           }
           const data = await getTransactionList(query)
           this.isLoading = false
-          this.salesReport = data.salesReport
-          if (this.salesReport.transactions.length > 0) {
-            this.salesReport.transactions.push({
-              menuName: 'สรุป',
-              transactionUnit: data.salesReport.summaryAmount,
-              fee: data.salesReport.summaryFee,
-              vat: data.salesReport.summaryVat,
-              totalPrice: data.salesReport.summarySales,
-              totalCost: data.salesReport.summaryCost,
-              totalProfit: data.salesReport.summaryProfit,
-              totalProfitPercent: data.salesReport.avgProfitPercent,
-            })
-          }
+          this.salesReport = data.transactions
+          this.totalRows = data.transactions.total_rows
+          // this.pageSize = data.transactions.limit
         } catch (err) {
           this.isLoading = false
           this.notification('Get Transactions', 'failure', 'error')
@@ -294,7 +307,6 @@
         try {
           const data = await getMenuList()
           this.menuData = data.menus
-
           const StockData = await getStockList()
           this.stockData = StockData.stocks
           this.isShowCreateModel = true
@@ -319,7 +331,6 @@
       async createTransaction() {
         try {
           this.createTransactionData.createdAt = moment(this.createdAt).valueOf()
-          console.log(this.createTransactionData)
           await createTransactionAPI(this.createTransactionData)
           this.isShowCreateModel = false
           await this.getTransactions()
@@ -335,6 +346,10 @@
           text: text,
           type: type,
         })
+      },
+      async onClickHandler(page: number) {
+        this.page = page
+        await this.getTransactions()
       },
     },
   })
@@ -354,5 +369,34 @@
   .custom-right {
     position: absolute;
     right: 0;
+  }
+
+  .pagination-container {
+    display: flex;
+    column-gap: 10px;
+  }
+
+  .paginate-buttons {
+    height: 40px;
+    width: 40px;
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: rgb(242, 242, 242);
+    border: 1px solid rgb(217, 217, 217);
+    color: black;
+  }
+
+  .paginate-buttons:hover {
+    background-color: #d8d8d8;
+  }
+
+  .active-page {
+    background-color: #3498db;
+    border: 1px solid #3498db;
+    color: white;
+  }
+
+  .active-page:hover {
+    background-color: #2988c8;
   }
 </style>

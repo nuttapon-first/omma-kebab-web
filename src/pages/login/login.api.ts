@@ -1,12 +1,8 @@
-import axios from 'axios'
-
-const axiosClient = axios.create({
-  baseURL: 'http://localhost:8081/login',
-})
+import axiosClient from '../../router/api.service'
 
 export async function login(loginPayload: any) {
   try {
-    const { data } = await axiosClient.post('', loginPayload, {})
+    const { data } = await axiosClient.post('login', loginPayload, {})
     return [null, data]
   } catch (err) {
     return [err]

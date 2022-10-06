@@ -1,14 +1,11 @@
-import axios from 'axios'
 import router from '../../../router'
 import authHeader from '../../../services/data/auth-header'
 
-const axiosClient = axios.create({
-  baseURL: 'http://localhost:8081/v1/stocks',
-})
+import axiosClient from '../../../router/api.service'
 
 axiosClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  (response: any) => response,
+  (error: any) => {
     if (error.response.status === 401) {
       router.push('/auth/login')
     }
@@ -18,7 +15,7 @@ axiosClient.interceptors.response.use(
 
 export async function getStockList() {
   try {
-    const result = await axiosClient.get('', { headers: authHeader() as any })
+    const result = await axiosClient.get('stocks', { headers: authHeader() as any })
     return result.data
   } catch (err) {
     console.log(err)
@@ -28,7 +25,7 @@ export async function getStockList() {
 
 export async function addStock(payload: any) {
   try {
-    const result = await axiosClient.put(`${payload.id}/add`, payload, { headers: authHeader() as any })
+    const result = await axiosClient.put(`stocks/${payload.id}/add`, payload, { headers: authHeader() as any })
     return result.data
   } catch (err) {
     console.log(err)
@@ -38,7 +35,7 @@ export async function addStock(payload: any) {
 
 export async function createStock(payload: any) {
   try {
-    const result = await axiosClient.post('', payload, { headers: authHeader() as any })
+    const result = await axiosClient.post('stocks', payload, { headers: authHeader() as any })
     return result.data
   } catch (err) {
     console.log(err)
@@ -48,7 +45,7 @@ export async function createStock(payload: any) {
 
 export async function deleteStock(stockId: number) {
   try {
-    const result = await axiosClient.delete(`/${stockId}`, { headers: authHeader() as any })
+    const result = await axiosClient.delete(`stocks/${stockId}`, { headers: authHeader() as any })
     return result.data
   } catch (err) {
     console.log(err)

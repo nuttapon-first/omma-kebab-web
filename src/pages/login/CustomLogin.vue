@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from 'vue'
+  import { defineComponent } from 'vue'
   import { login } from './login.api'
 
   export default defineComponent({
@@ -60,7 +60,7 @@
             if (err) console.error(err)
             else {
               localStorage.setItem('user', JSON.stringify(data))
-              this.$router.push({ name: 'stocks' })
+              this.$router.push({ name: 'dashboard' })
             }
           }
         } catch (err) {

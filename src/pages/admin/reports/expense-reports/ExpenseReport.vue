@@ -89,7 +89,7 @@
             </div>
             <br />
             <div class="flex md12">
-              <va-input v-model.number="createExpenseData.expenseCost" :label="'cost'" @keypress="isNumber"/>
+              <va-input v-model.number="createExpenseData.expenseCost" :label="'cost'" @keypress="isNumber" />
             </div>
             <br />
             <div class="my-5">

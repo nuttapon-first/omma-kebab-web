@@ -1,14 +1,12 @@
-import axios from 'axios'
+
 import router from '../../../../router'
 import authHeader from '../../../../services/data/auth-header'
 
-const axiosClient = axios.create({
-  baseURL: 'http://localhost:8081/v1/expenses',
-})
+import axiosClient from '../../../../router/api.service'
 
 axiosClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  (response: any) => response,
+  (error: any) => {
     if (error.response.status === 401) {
       router.push('/auth/login')
     }
@@ -18,7 +16,7 @@ axiosClient.interceptors.response.use(
 
 export async function getExpenseList(query: any) {
   try {
-    const { data } = await axiosClient.get('', { params: query, headers: authHeader() as any })
+    const { data } = await axiosClient.get('expenses', { params: query, headers: authHeader() as any })
     return data
   } catch (err) {
     console.log(err)
@@ -28,7 +26,7 @@ export async function getExpenseList(query: any) {
 
 export async function createExpense(payload: any) {
   try {
-    const { data } = await axiosClient.post('', payload, { headers: authHeader() as any })
+    const { data } = await axiosClient.post('expenses', payload, { headers: authHeader() as any })
     return data
   } catch (err) {
     console.log(err)
